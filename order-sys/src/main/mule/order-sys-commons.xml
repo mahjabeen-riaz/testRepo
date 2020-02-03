@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="520a3e5c-7434-4b51-898b-0eb5b87543b9" file="dev-order-config.yaml" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="69cefab7-13e3-417d-9b2b-e6ee8a7dd8bd" >
+		<db:mssql-connection host="${db.host}" user="${db.username}" password="${db.password}" databaseName="${db.name}" />
+	</db:config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="30394cf2-0415-4fed-ab72-a33515ccbd74" >
+		<file:connection workingDir="${file.dir}" >
+			<reconnection >
+				<reconnect frequency="5000" />
+			</reconnection>
+		</file:connection>
+	</file:config>
+	
+</mule>

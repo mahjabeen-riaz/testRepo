@@ -1,0 +1,9 @@
+db:
+  host: "LHRLT-2356"
+  username: "sa"
+  password: "abcd@1234"
+  name: "POS-mule"
+file:
+  dir: "E:/All Things Mule/FileHandling/output/orders/"
+  path: "orders"
+  name: "orders"

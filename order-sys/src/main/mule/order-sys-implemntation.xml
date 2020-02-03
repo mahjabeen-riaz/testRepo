@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+	<flow name="getOrders_Flow" doc:id="1bc58076-7d1e-438d-a409-fa66e37a7fb3" >
+		<logger level="INFO" doc:name="Logger" doc:id="7bd6a486-1fea-47fc-a658-aa60d864fb30" message="[POC-Order: 0001]***** Request received to retrieve order data"/>
+		<db:select doc:name="Select" doc:id="4f3c5ad1-4c2c-4cbe-b695-23f27f4abd43" config-ref="Database_Config">
+			<db:sql >select * from [dbo].[order]</db:sql>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="69a9ea7b-2170-457e-bb4c-5d4678c19062" message="[POC-Order: 0002]***** Orders retrieved, transformaing data now."/>
+		<ee:transform doc:name="Transform Message" doc:id="9d75fa5b-6fbe-4009-b9c3-1f31397c91f2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv separator="|"
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="0d3018c2-8b06-4ddd-bcff-9107662f0d97" message="#[payload]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="e6c39c46-b831-410e-a342-5456f9478346" name="load_data_in_file"/>
+		<ee:transform doc:name="Transform to JSON" doc:id="ee74d7d0-f285-439e-bb0d-349e72aa69ac" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4f800d13-0be5-48bf-a9b1-1cc67af1c30a" message="[POC-Order: 0004]***** File written at destination"/>
+	</flow>
+	<flow name="load_data_in_file" doc:id="adea2b14-4271-4d50-9088-362a61660afd" >
+		<logger level="INFO" doc:name="Logger" doc:id="7949a638-b178-4c45-a694-e45dda671480" message="[Load-in-file: 0001]***** Loading data in file at ${file.dir}${file.path}"/>
+		<set-variable value="#[p('file.name') ++ '_' ++ now() as String {format: &quot;yyMMdd&quot;} ++ &quot;.txt&quot;]" doc:name="Set Variable" doc:id="4628dc4b-05eb-40c2-b213-a5d09b1ffddc" variableName="fileName"/>
+		<logger level="INFO" doc:name="Logger" doc:id="47a543bc-6274-4c54-8173-7591fb7eb57d" message="#[vars.fileName]"/>
+		<file:write doc:name="Write" doc:id="4b7ded3f-1466-4a6e-bf6b-d22250245e32" config-ref="File_Config" path="#[vars.fileName]" mode="CREATE_NEW"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a6585ea9-2be0-4baa-8dd3-08e2a12fbf64" message="[Load-in-file: 0002]***** Data written in file"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="cc85f357-db40-485c-aee8-8f2304c68182" type="ANY">
+				<flow-ref doc:name="Flow Reference" doc:id="17adedfe-21d9-4afa-9717-db6a2cadd8e7" name="log_order-sys_exceptions_Flow"/>
+			</on-error-propagate>
+		</error-handler>
+	
+</flow>
+</mule>

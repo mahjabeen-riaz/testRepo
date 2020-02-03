@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="log_order-sys_exceptions_Flow" doc:id="c2d591ed-d8aa-422e-bf8a-a20a6d1a2ba4" >
+		<logger level="INFO" doc:name="Logger" doc:id="964da4da-ae08-46be-bec8-967cbe387905" message="[OS-Exception: 0001]****** Exception flow"/>
+		<set-payload value="#[null]" doc:name="Set Payload Null" doc:id="155c319c-88ce-453b-95aa-aadfc7179900" />
+	</flow>
+</mule>
